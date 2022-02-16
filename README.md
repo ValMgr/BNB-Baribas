@@ -20,4 +20,5 @@
 - Je n'arrive pas à casser l'application : **2pts**
 - Un readme pour l'installation : **1pts**
 
-### Le projet sera sur github (attention de bien utilise git pour que je puisse voir l'historique des commits)
+## Trello
+https://trello.com/b/GRmB577G/bnb-baribas
