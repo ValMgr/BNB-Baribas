@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\Security;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\DateTime;
+
 
 use App\Entity\Virement;
 use App\Entity\Account;
@@ -34,30 +36,45 @@ class VirementController extends AbstractController
 
         $form = $this->createForm(VirementType::class, $virement, ["origines" =>  $user->getAccount()] );
 
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // dd($form->getData());
-            $rib = $form->get('rib')->getData();
-
-            $accounts = $doctrine->getRepository(Account::class)->findByRIB($rib);
-            dd($accounts);
-
             $virement = $form->getData();
-            $virement->setDestinataire($rib);
-            // dd($virement);
+            $isUserAccount = $doctrine->getRepository(Account::class)->findOneBy(['userId' => $this->user->getId(), 'id' => $virement->getOrigine()->getId()]);
+         
+            if (!$isUserAccount) {
+                throw new Exception('It\'s not your account petit filou');
+            }
+
+            $rib = $form->get('rib')->getData();
+            $targetAccounts = $doctrine->getRepository(Account::class)->findOneBy(['RIB' => $rib]);
+
+            if (!$targetAccounts) {
+               throw $this->createNotFoundException(
+                   'No account found with RIB: '.$rib
+               ); 
+            }
+
+            $originAmount = $virement->getOrigine()->getAmount() - ($virement->getMontant() * 100);
+            $virement->getOrigine()->setAmount($originAmount);
+            $virement->setDestinataire($targetAccounts);
+            $virement->setDate(new \DatetimeImmutable());
+            $virement->setStatus(1);
+
+
+            
+            $targetAmount = $targetAccounts->getAmount() + ($virement->getMontant() * 100);
+            $targetAccounts->setAmount($targetAmount);
+
             $entityManager->persist($virement);
             $entityManager->flush();
-
-
+            
+                
             return $this->redirectToRoute('virement');
         }
-
+            
         return $this->renderForm('virement/index.html.twig', [
             'virementCreateForm' => $form
         ]);
-
-        // return $this->render('home/index.html.twig', []);
     }
 }
