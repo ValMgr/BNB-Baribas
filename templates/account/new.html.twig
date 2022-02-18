@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Crée un compte{% endblock %}
+
+
+{% block body %}
+<div class="container w-50">
+    <h1 class="mb-4">Nouveau compte</h1>
+
+    {% form_theme acccountCreateForm 'bootstrap_5_layout.html.twig' %}
+    {{ form_start(acccountCreateForm) }}
+        {{ form_row(acccountCreateForm.name, {
+            label: 'Nom : '
+        }) }}
+        {{ form_row(acccountCreateForm.type, {
+            label: 'Type : '
+        }) }}
+
+        <button type="submit" class="btn btn-danger mt-3">Créer votre compte</button>
+    {{ form_end(acccountCreateForm) }}
+
+</div>
+{% endblock %}
