@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AccountController!{% endblock %}
+{% block title %}Mes comptes{% endblock %}
 
 {% block body %}
 
@@ -17,7 +17,7 @@
             {% for account in accounts %}
                 <li class="account-item mt-4 d-flex justify-content-between align-items-center">
                     {{ account.type }} - {{ account.name }}
-                    <span class="amount">{{ account.amount }} €</span>
+                    <span class="amount">{{ (account.amount / 100)|round(0, 'floor') }},{{ (account.amount % 1000)| strpad(2,'0') }} €</span>
                 </li>
             {% endfor %}
         </ul>
