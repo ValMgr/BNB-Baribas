@@ -6,6 +6,7 @@ use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -16,6 +17,10 @@ class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $year = [];
+        foreach (range(1920, date('Y')) as $number) {
+            array_push($year, $number);
+        }
         $builder
             ->add('email')
             ->add('name')
@@ -23,7 +28,10 @@ class RegistrationFormType extends AbstractType
             ->add('adress') 
             ->add('postalCode') 
             ->add('city') 
-            // ->add('dateBirth', ) 
+            ->add('dateBirth', DateType::class, [
+                'widget' => 'choice',
+                'years' => $year
+            ]) 
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
