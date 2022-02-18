@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Faire un virement{% endblock %}
+
+{% block body %}
+
+
+<div class="container">
+    <h1>Faire un virement</h1>
+
+    {% form_theme virementCreateForm 'bootstrap_5_layout.html.twig' %}
+    {{ form_start(virementCreateForm) }}
+        {{ form_row(virementCreateForm.montant, {
+            label: 'Montant : '
+        }) }}
+        {{ form_row(virementCreateForm.rib, {
+            label: 'Destinataire : '
+        }) }}
+        {{ form_row(virementCreateForm.origine, {
+            label: 'Origine : '
+        }) }}
+        <button>valider</button>
+    {{ form_end(virementCreateForm) }}
+
+
+    </div>
+{% endblock %}
