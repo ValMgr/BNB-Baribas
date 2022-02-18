@@ -9,6 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 
 use App\Entity\Account;
 use App\Form\AccountType;
@@ -35,7 +37,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/account/create', name: 'createAccoun')]
+    #[Route('/account/create', name: 'createAccount')]
     public function createAccount(Request $request, EntityManagerInterface $entityManager): Response
     {
 
@@ -47,7 +49,7 @@ class AccountController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
           
             $account->setUserId($this->user);
-            $account->setRIB($num = str_pad(mt_rand(1,99999999),8,'0',STR_PAD_LEFT));
+            $account->setRIB('FRA'.str_pad(mt_rand(1,9999999999999999),16,'0',STR_PAD_LEFT));
             $account->setAmount(0);
             $entityManager->persist($account);
             $entityManager->flush();
@@ -59,4 +61,64 @@ class AccountController extends AbstractController
             'acccountCreateForm' => $form->createView(),
         ]);
     }
+
+    #[Route('/account/loan', name: 'loanForm', methods: ['GET'])]
+    public function loanForm(ManagerRegistry $doctrine)
+    {
+        $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
+        return $this->render('account/loan.html.twig', [
+            'accounts' => $accounts
+        ]);
+    }
+
+    #[Route('/account/loan', name: 'loanCreate', methods: ['POST'])]
+    public function loanCreate(RequestStack $requestStack, ManagerRegistry $doctrine)
+    {
+        $entityManager = $doctrine->getManager();
+        $rq = $requestStack->getMainRequest();
+        $accountId = $rq->get('accountId');
+        $account = $doctrine->getRepository(Account::class)->find($accountId);
+
+        if (!$account) {
+            throw $this->createNotFoundException(
+                'No account found for id '.$accountId
+            );
+        }
+
+        $newAmount = $account->getAmount() + $rq->get('cents') + ($rq-> get('euro') * 100);
+        $account->setAmount($newAmount);
+
+        $entityManager->flush();
+        return $this->redirectToRoute('account');
+    }
+
+    #[Route('/account/delete', name: 'accountFormDelete', methods: ['GET'])]
+    public function deleteForm(ManagerRegistry $doctrine)
+    {
+        $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
+        return $this->render('account/delete.html.twig', [
+            'accounts' => $accounts
+        ]);
+    }
+
+    #[Route('/account/delete', name: 'accountDelete', methods: ['POST'])] // Parce que j'ai pas envie de faire de l'ajax pour utliser la méthode DELETE. Désolé
+    public function accountDelete(RequestStack $requestStack, ManagerRegistry $doctrine)
+    {
+        $rq = $requestStack->getMainRequest();
+        $entityManager = $doctrine->getManager();
+        $accountId = $rq->get('accountId');
+        $account = $doctrine->getRepository(Account::class)->find($accountId);
+
+        if (!$account) {
+            throw $this->createNotFoundException(
+                'No account found for id '.$id
+            );
+        }
+
+        $entityManager->remove($account);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('account');
+    }
+
 }
