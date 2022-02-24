@@ -3,11 +3,11 @@
 # Faire une application bancaire qui permet :
 
 
-- Login/Logout/Registration.
-- Créer un compte (un utilisateur peut avoir plusieurs comptes).
-- De voir son compte.
-- De rajouter de l'argent sur le compte avec un formulaire.
-- Faire un virement à un autre utilisateur.
+- :white_check_mark: Login/Logout/Registration.
+- :white_check_mark: Créer un compte (un utilisateur peut avoir plusieurs comptes).
+- :white_check_mark: De voir son compte.
+- :white_check_mark: De rajouter de l'argent sur le compte avec un formulaire.
+- :white_check_mark: Faire un virement à un autre utilisateur.
 - Faire une demande de virement à un utilisateur qui s'affichera quand il sera connecté.
 - Supprimer un compte
 
