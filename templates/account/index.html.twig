@@ -4,6 +4,11 @@
 
 {% block body %}
 
+<style>
+    .imgWidth{width: 150px;}
+    .cardAvatar {align-items: center;}
+</style>
+
     <div class="container">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Mon dashboard :</h2>
@@ -14,15 +19,32 @@
             </div>
         </div>
 
-        <ul class="list-group mt-5 mx-auto">
-            {% for account in accounts %}
-                <li class="account-item mt-4 d-flex align-items-center">
-                    {{ account.type }} - {{ account.name }}
-                    <span class="mx-5" style="flex-grow: 1;font-size: .7em">RIB: {{ account.RIB }}</span>
-                    <span class="amount" style="margin-left: auto">{{ (account.amount / 100)|round(0, 'floor') }},{{ (account.amount % 100)| strpad(2,'0') }} € </span>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="row mt-5">
+            <div class="col-4">
+                <div class="card cardAvatar" style="width: 18rem;">
+                <img src="/img/avatar.jpg" class="card-img-top imgWidth" alt="Avatar">
+                <div class="card-body">
+                    <h5 class="card-title">{{ app.user.name }} {{ app.user.firstname }}</h5>
+                    <p>{{ app.user.email }}</p>
+                    <p>{{ app.user.adress }} <br /> 
+                    {{ app.user.postalCode }}, {{ app.user.City }}</p>
+
+                </div>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <ul class="list-group mt-5 mx-auto">
+                    {% for account in accounts %}
+                        <li class="account-item mt-4 d-flex align-items-center">
+                            {{ account.type }} - {{ account.name }}
+                            <span class="mx-5" style="flex-grow: 1;font-size: .7em">RIB: {{ account.RIB }}</span>
+                            <span class="amount" style="margin-left: auto">{{ (account.amount / 100)|round(0, 'floor') }},{{ (account.amount % 100)| strpad(2,'0') }} € </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
 
     <style>
