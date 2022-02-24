@@ -92,21 +92,12 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('account');
     }
 
-    #[Route('/account/delete', name: 'accountFormDelete', methods: ['GET'])]
-    public function deleteForm(ManagerRegistry $doctrine)
-    {
-        $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
-        return $this->render('account/delete.html.twig', [
-            'accounts' => $accounts
-        ]);
-    }
-
-    #[Route('/account/delete', name: 'accountDelete', methods: ['POST'])] // Parce que j'ai pas envie de faire de l'ajax pour utliser la méthode DELETE. Désolé
+    #[Route('/account/delete/{id}', name: 'accountDelete', methods: ['GET'])] // Parce que j'ai pas envie de faire de l'ajax pour utliser la méthode DELETE. Désolé
     public function accountDelete(RequestStack $requestStack, ManagerRegistry $doctrine)
     {
         $rq = $requestStack->getMainRequest();
         $entityManager = $doctrine->getManager();
-        $accountId = $rq->get('accountId');
+        $accountId = $rq->attributes->get('id');
         $account = $doctrine->getRepository(Account::class)->find($accountId);
 
         if (!$account) {
