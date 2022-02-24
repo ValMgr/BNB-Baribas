@@ -7,6 +7,8 @@
 <style>
     .imgWidth{width: 150px;}
     .cardAvatar {align-items: center;}
+    .btnOption{color: #FFF;}
+    .modalOption{width: 195px; height: 225px; top: -22px; left: 670px;}
 </style>
 
     <div class="container">
@@ -33,17 +35,37 @@
                 </div>
             </div>
 
-            <div class="col-6">
+
+            <div class="col-7">
                 <ul class="list-group mt-5 mx-auto">
                     {% for account in accounts %}
                         <li class="account-item mt-4 d-flex align-items-center">
                             {{ account.type }} - {{ account.name }}
                             <span class="mx-5" style="flex-grow: 1;font-size: .7em">RIB: {{ account.RIB }}</span>
                             <span class="amount" style="margin-left: auto">{{ (account.amount / 100)|round(0, 'floor') }},{{ (account.amount % 100)| strpad(2,'0') }} € </span>
+                            <a class="btn btn-info btn-sm ms-3 btnOption" onclick="openModal({{ account.id }})">...</a>
                         </li>
+                        <div class="card top-20 start-100" id="{{ account.id }}" style="width: 12rem; display: none;">
+                            <ul class="list-group list-group-flush">
+                                <span onclick="closeModal({{ account.id }})" class="text-end fw-bold me-2">X</span>
+                                <li class="list-group-item"><a href="/account/delete/{{ account.id }}">Supprimer le compte</a></li>
+                                <li class="list-group-item"><a href="/account/change/{{ account.id }}">Renommer le compte<a/></li>
+                            </ul>
+                        </div>
                     {% endfor %}
                 </ul>
             </div>
+            <script>
+                function openModal(rib) {
+                    var modal = document.getElementById(rib)
+                    modal.style.display = 'block';
+                }
+                function closeModal(rib) {
+                    var modal = document.getElementById(rib)
+                    modal.style.display = 'none';
+                }
+            
+            </script>
         </div>
     </div>
 
