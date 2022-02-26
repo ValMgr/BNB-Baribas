@@ -38,6 +38,7 @@
 
 
             <div class="col-7">
+                <h2>Mes comptes</h2>
                 <ul class="list-group mt-5 mx-auto">
                     {% for account in accounts %}
                         <li class="account-item mt-4 d-flex align-items-center">
@@ -60,20 +61,43 @@
 
                 <div>
                     <h2>Demande de règlement en attente</h2>
-                    <ul>
+                    <ul class="list-group">
                         {% for payment in payments %}
-                        <li class="account-item mt-4 d-flex align-items-center"> {{ payment.owner.firstname }} {{ payment.owner.name }} 
+                        <li class="account-item mt-4 d-flex align-items-center">De: {{ payment.owner.firstname }} {{ payment.owner.name }} 
                             <span style="font-size:.8em">&nbsp;({{payment.owner.email}})&nbsp;</span>
                             |<span style="font-size:.9em;flex-grow:1">&nbsp;Le: {{ payment.createdat|date('d/m/Y') }}&nbsp;</span>
                             <span style="font-size:1.2em;color:#c01717">{{ payment.amount / 100 }}€</span>
                             <div class="ms-4">
-                                <a href="" class="btn btn-success">V</a>
-                                <a href="" class="btn btn-danger">X</a>
+                                <a href="/payment/accept/{{payment.id}}" class="btn btn-success">V</a>
+                                <a href="/payment/refuse/{{payment.id}}" class="btn btn-danger">X</a>
                             </div>
                         </li>
                         {% endfor %}
                     </ul>
                     
+                </div>
+
+                <hr class="my-5" style="height: 3px;background-color: rgb(179 6 27);opacity: 1">
+
+                <div>
+                    <h2>Mes demandes de règlement envoyés</h2>
+                    <ul class="list-group">
+                        {% for request in requests %}
+                            <li class="account-item mt-4 d-flex align-items-center">
+                                <span>À: {{ request.payerUser.firstname }} {{ request.payerUser.name }}</span>
+                                <span style="font-size:.8em">&nbsp;({{request.payerUser.email}})&nbsp;</span>
+                                |<span style="font-size:.9em;">&nbsp;Le: {{ request.createdat|date('d/m/Y') }}&nbsp;</span>
+                                {% if request.status == 0 %}
+                                    <span style="flex-grow:1;color:#89aaca" class="mx-1">En attente</span>
+                                {% elseif request.status == 1 %}
+                                    <span style="flex-grow:1;color:#388a17" class="mx-1">Accepté</span>
+                                {% elseif request.status == 2 %}
+                                    <span style="flex-grow:1;color:#c01717" class="mx-1">Refusé</span>                                    
+                                {% endif %}
+                                <span style="font-size:1.2em;color:#388a17">{{ request.amount / 100 }}€</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
 
                 <hr class="my-5" style="height: 3px;background-color: rgb(179 6 27);opacity: 1">

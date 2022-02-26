@@ -54,15 +54,12 @@ class VirementController extends AbstractController
                ); 
             }
 
-            $originAmount = $virement->getOrigine()->getAmount() - ($virement->getMontant() * 100);
+            $originAmount = $virement->getOrigine()->getAmount() - ($virement->getMontant());
             $virement->getOrigine()->setAmount($originAmount);
             $virement->setDestinataire($targetAccounts);
             $virement->setDate(new \DatetimeImmutable());
-            $virement->setStatus(1);
-
-
             
-            $targetAmount = $targetAccounts->getAmount() + ($virement->getMontant() * 100);
+            $targetAmount = $targetAccounts->getAmount() + ($virement->getMontant());
             $targetAccounts->setAmount($targetAmount);
 
             $entityManager->persist($virement);

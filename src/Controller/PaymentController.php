@@ -11,8 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use App\Entity\Account;
+use App\Entity\Virement;
 use App\Entity\Payment;
 use App\Entity\User;
 use App\Form\PaymentType;
@@ -58,4 +60,46 @@ class PaymentController extends AbstractController
             'requestCreateForm' => $form,
         ]);
     }
+
+    #[Route('/payment/accept/{id}', name: 'paymentAccept', methods: ['GET'])]
+    public function chooseAccountPayment(ManagerRegistry $doctrine){
+        $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
+        return $this->render('payment/valid.html.twig', [
+            'accounts' => $accounts
+        ]);
+    }
+
+    #[Route('/payment/accept/{id}', name: 'createPayment', methods: ['POST'])]
+    public function acceptPayment(RequestStack $requestStack, ManagerRegistry $doctrine){
+        $rq = $requestStack->getMainRequest();
+        $entityManager = $doctrine->getManager();
+
+        $payment = $doctrine->getRepository(Payment::class)->findOneBy(['id' => $rq->get('id')]);
+        $myAccount = $doctrine->getRepository(Account::class)->findOneBy(['id' => $rq->get('accountId')]);
+        $transaction = new Virement();
+
+        $transaction->setMontant($payment->getAmount());
+        $transaction->setOrigine($myAccount);
+        $transaction->setDestinataire($payment->getMyAccount());
+        $transaction->setDate(new \DatetimeImmutable());
+        $payment->setStatus(1);
+        
+        $entityManager->persist($transaction);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('account');
+    }
+
+    #[Route('/payment/refuse/{id}', name: 'paymentRefuse')]
+    public function refusePayment(RequestStack $requestStack, ManagerRegistry $doctrine){
+        $rq = $requestStack->getMainRequest();
+        $entityManager = $doctrine->getManager();
+
+        $payment = $doctrine->getRepository(Payment::class)->findOneBy(['id' => $rq->get('id')]);
+        $payment->setStatus(2);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('account');
+    }
+
 }

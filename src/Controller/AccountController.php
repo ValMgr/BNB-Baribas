@@ -32,11 +32,14 @@ class AccountController extends AbstractController
     {
 
         $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
-        $payments = $doctrine->getRepository(Payment::class)->findByPayerUser($this->user->getId());
+        $payments = $doctrine->getRepository(Payment::class)->findBy(['payerUser' => $this->user->getId(), 'status' => 0]);
+        $requests = $doctrine->getRepository(Payment::class)->findBy(['owner' => $this->user->getId()]);
+
 
         return $this->render('account/index.html.twig', [
             'accounts' => $accounts,
-            'payments' => $payments
+            'payments' => $payments,
+            'requests' => $requests
         ]);
     }
 
