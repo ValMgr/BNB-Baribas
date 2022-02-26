@@ -62,10 +62,11 @@ class PaymentController extends AbstractController
     }
 
     #[Route('/payment/accept/{id}', name: 'paymentAccept', methods: ['GET'])]
-    public function chooseAccountPayment(ManagerRegistry $doctrine){
+    public function chooseAccountPayment(RequestStack $requestStack, ManagerRegistry $doctrine){
         $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
         return $this->render('payment/valid.html.twig', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'id' => $requestStack->getMainRequest()->get('id')
         ]);
     }
 
@@ -76,14 +77,18 @@ class PaymentController extends AbstractController
 
         $payment = $doctrine->getRepository(Payment::class)->findOneBy(['id' => $rq->get('id')]);
         $myAccount = $doctrine->getRepository(Account::class)->findOneBy(['id' => $rq->get('accountId')]);
+        $targetAccount = $payment->getMyAccount();
         $transaction = new Virement();
 
         $transaction->setMontant($payment->getAmount());
         $transaction->setOrigine($myAccount);
-        $transaction->setDestinataire($payment->getMyAccount());
+        $transaction->setDestinataire($targetAccount);
         $transaction->setDate(new \DatetimeImmutable());
         $payment->setStatus(1);
-        
+
+        $myAccount->setAmount($myAccount->getAmount() - $payment->getAmount());
+        $targetAccount->setAmount($targetAccount->getAmount() + $payment->getAmount());
+
         $entityManager->persist($transaction);
         $entityManager->flush();
 
