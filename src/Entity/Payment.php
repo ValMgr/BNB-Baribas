@@ -33,6 +33,10 @@ class Payment
     #[ORM\JoinColumn(nullable: false)]
     private $payerUser;
 
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'myPayments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $owner;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -106,6 +110,18 @@ class Payment
     public function setPayerUser(?User $payerUser): self
     {
         $this->payerUser = $payerUser;
+
+        return $this;
+    }
+
+    public function getOwner(): ?User
+    {
+        return $this->owner;
+    }
+
+    public function setOwner(?User $owner): self
+    {
+        $this->owner = $owner;
 
         return $this;
     }

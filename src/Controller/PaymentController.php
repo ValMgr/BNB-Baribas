@@ -19,6 +19,16 @@ use App\Form\PaymentType;
 
 class PaymentController extends AbstractController
 {
+
+    private $security;
+
+    public function __construct(Security $security)
+    {
+       $this->security = $security;
+       $this->user = $this->security->getUser();
+    }
+
+
     #[Route('/request', name: 'request')]
     public function createPaymentRequest(Request $request, EntityManagerInterface $entityManager, ManagerRegistry $doctrine, UserInterface $user){
         $payment = new Payment();
@@ -30,6 +40,8 @@ class PaymentController extends AbstractController
             $email = $form->get('pUser')->getData();
             $payerUser = $doctrine->getRepository(User::class)->findOneBy(['email' => $email]);
             
+
+            $payment->setOwner($this->user);
             $payment->setCreatedAt(new \DatetimeImmutable());
             $payment->setUpdatedAt(new \DatetimeImmutable());
             $payment->setPayerUser($payerUser);

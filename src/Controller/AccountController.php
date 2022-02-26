@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 
 use App\Entity\Account;
+use App\Entity\Payment;
 use App\Form\AccountType;
 
 
@@ -31,9 +32,11 @@ class AccountController extends AbstractController
     {
 
         $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
+        $payments = $doctrine->getRepository(Payment::class)->findByPayerUser($this->user->getId());
 
         return $this->render('account/index.html.twig', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'payments' => $payments
         ]);
     }
 

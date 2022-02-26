@@ -38,6 +38,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->account = new ArrayCollection();
         $this->payments = new ArrayCollection();
+        $this->myPayments = new ArrayCollection();
     }
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
@@ -59,6 +60,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'payerUser', targetEntity: Payment::class)]
     private $payments;
+
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Payment::class)]
+    private $myPayments;
 
     public function getId(): ?int
     {
@@ -256,6 +260,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($payment->getPayerUser() === $this) {
                 $payment->setPayerUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Payment[]
+     */
+    public function getMyPayments(): Collection
+    {
+        return $this->myPayments;
+    }
+
+    public function addMyPayment(Payment $myPayment): self
+    {
+        if (!$this->myPayments->contains($myPayment)) {
+            $this->myPayments[] = $myPayment;
+            $myPayment->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMyPayment(Payment $myPayment): self
+    {
+        if ($this->myPayments->removeElement($myPayment)) {
+            // set the owning side to null (unless already changed)
+            if ($myPayment->getOwner() === $this) {
+                $myPayment->setOwner(null);
             }
         }
 
