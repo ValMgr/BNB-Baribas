@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 
 use App\Entity\Account;
+use App\Entity\Virement;
+use App\Entity\Payment;
 use App\Form\AccountType;
 
 
@@ -29,13 +31,18 @@ class AccountController extends AbstractController
     #[Route('/account', name: 'account')]
     public function index(ManagerRegistry $doctrine): Response
     {
-
         $accounts = $doctrine->getRepository(Account::class)->findByUserId($this->user->getId());
+        $payments = $doctrine->getRepository(Payment::class)->findBy(['payerUser' => $this->user->getId(), 'status' => 0]);
+        $requests = $doctrine->getRepository(Payment::class)->findBy(['owner' => $this->user->getId()]);
 
         return $this->render('account/index.html.twig', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'payments' => $payments,
+            'requests' => array_reverse($requests),
         ]);
     }
+
+ 
 
     #[Route('/account/create', name: 'createAccount')]
     public function createAccount(Request $request, EntityManagerInterface $entityManager): Response

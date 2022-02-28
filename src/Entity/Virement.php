@@ -19,9 +19,6 @@ class Virement
     #[ORM\Column(type: 'datetime_immutable')]
     private $date;
 
-    #[ORM\Column(type: 'integer')]
-    private $status;
-
     #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'mesVirements')]
     #[ORM\JoinColumn(nullable: false)]
     private $origine;
@@ -56,18 +53,6 @@ class Virement
     public function setDate(\DateTimeImmutable $date): self
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getStatus(): ?int
-    {
-        return $this->status;
-    }
-
-    public function setStatus(int $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }
