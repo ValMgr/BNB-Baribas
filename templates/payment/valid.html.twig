@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Valider le paiement {% endblock %}
+
+
+{% block body %}
+<div class="container w-50">
+    <h1 class="mb-4">Valider le paiement</h1>
+
+    <form action="{{ url('createPayment', {id: id}) }}" method="POST">
+        <div class="form-group mb-3">
+            <label class="mb-2" for="accountId">Choisisez le compte à débiter: </label>
+            <select class="form-control" id="account" name="accountId">
+            {% for account in accounts %}
+                <option value="{{ account.id }}">{{ account.type }} - {{ account.name }}</option>
+            {% endfor %}
+            </select>
+        </div>
+        <input type="submit" class="btn btn-success" value="Valider">
+    </form>
+
+</div>
+{% endblock %}
