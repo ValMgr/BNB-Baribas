@@ -1,15 +1,8 @@
 # BNB-Baribas
 
-# Faire une application bancaire qui permet :
+# Installation :
 
 
-- Login/Logout/Registration.
-- Créer un compte (un utilisateur peut avoir plusieurs comptes).
-- De voir son compte.
-- De rajouter de l'argent sur le compte avec un formulaire.
-- Faire un virement à un autre utilisateur.
-- Faire une demande de virement à un utilisateur qui s'affichera quand il sera connecté.
-- Supprimer un compte
 
 
 # Notation :

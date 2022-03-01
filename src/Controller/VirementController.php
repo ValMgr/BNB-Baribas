@@ -12,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
 
-
 use App\Entity\Virement;
 use App\Entity\Account;
 use App\Form\VirementType;
@@ -55,15 +54,12 @@ class VirementController extends AbstractController
                ); 
             }
 
-            $originAmount = $virement->getOrigine()->getAmount() - ($virement->getMontant() * 100);
+            $originAmount = $virement->getOrigine()->getAmount() - ($virement->getMontant());
             $virement->getOrigine()->setAmount($originAmount);
             $virement->setDestinataire($targetAccounts);
             $virement->setDate(new \DatetimeImmutable());
-            $virement->setStatus(1);
-
-
             
-            $targetAmount = $targetAccounts->getAmount() + ($virement->getMontant() * 100);
+            $targetAmount = $targetAccounts->getAmount() + ($virement->getMontant());
             $targetAccounts->setAmount($targetAmount);
 
             $entityManager->persist($virement);
@@ -77,4 +73,6 @@ class VirementController extends AbstractController
             'virementCreateForm' => $form
         ]);
     }
+
+   
 }
