@@ -1,6 +1,5 @@
 # BNB-Baribas
 
-
 ## Installation :
 
 Démarrer la base de donnée :
