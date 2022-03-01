@@ -12,9 +12,8 @@ Créer & exécuter les migrations
 `php bin/console make:migration`
 `php bin/console doctrine:migrations:migrate`
   
-  Lancer l'application Symfony
-  `symfony serve`
-  
+Lancer l'application Symfony
+`symfony serve`
 
 ## Notation :
 
