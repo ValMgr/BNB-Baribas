@@ -20,11 +20,11 @@ class Virement
     private $date;
 
     #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'mesVirements')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private $origine;
 
     #[ORM\ManyToOne(targetEntity: Account::class, inversedBy: 'virementsDestinataire')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private $destinataire;
 
 

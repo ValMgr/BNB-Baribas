@@ -32,9 +32,11 @@ class Account
     private $userId;
 
     #[ORM\OneToMany(mappedBy: 'origine', targetEntity: Virement::class)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $mesVirements;
 
     #[ORM\OneToMany(mappedBy: 'destinataire', targetEntity: Virement::class)]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private $virementsDestinataire;
 
     public function __construct()
