@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container w-50 mt-5">
+    <h1>Se connecter</h1>
+
+    {% if error %}
+        <div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+
+    <form action="{{ path('login') }}" method="post">
+        <div class="form-group m-2">
+            <label for="username">Email:</label>
+            <input type="email" class="form-control" id="username" name="_username" value="{{ last_username }}"/>
+        </div>
+        <div class="form-group m-2">
+            <label for="password">Mot de passe:</label>
+            <input type="password" class="form-control" id="password" name="_password"/>
+        </div>
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+        <button type="submit" class="btn btn-primary m-2">Se connecter</button>
+    </form>
+    <div class="column mt-5">
+        <p>Vous n'avez pas de compte ?</p>
+        <a href="/register" class="btn btn-primary" >Créer un compte</a>
+    </div>
+</div>
+{% endblock %}

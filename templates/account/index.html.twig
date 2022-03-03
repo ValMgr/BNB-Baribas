@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+<style>
+    .imgWidth{width: 150px;}
+    .cardAvatar {align-items: center;}
+    .btnOption{color: #FFF;}
+    .modalOption{width: 195px; height: 225px; top: -22px; left: 670px;}
+</style>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2>Mon dashboard :</h2>
+            <div class="actions">
+                <a href="/account/create" class="btn btn-primary mx-2">Créer un compte</a>
+                <a href="/account/loan" class="btn btn-primary mx-2">Faire un prêt</a>
+                <a href="/virement" class="btn btn-primary mx-2">Faire un virement</a>
+                <a href="/request" class="btn btn-primary mx-2">Demander de l'argent</a>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col-4">
+                <div class="card cardAvatar" style="width: 18rem;">
+                <img src="/img/avatar.jpg" class="card-img-top imgWidth" alt="Avatar">
+                <div class="card-body">
+                    <h5 class="card-title">{{ app.user.name }} {{ app.user.firstname }}</h5>
+                    <p>{{ app.user.email }}</p>
+                    <p>{{ app.user.adress }} <br /> 
+                    {{ app.user.postalCode }}, {{ app.user.City }}</p>
+
+                </div>
+                </div>
+            </div>
+
+
+            <div class="col-7">
+                <h2>Mes comptes</h2>
+                <ul class="list-group mt-5 mx-auto">
+                    {% for account in accounts %}
+                        <li class="account-item mt-4 d-flex align-items-center position-relative">
+                            {{ account.type }} - {{ account.name }}
+                            <span class="mx-5" style="flex-grow: 1;font-size: .7em">RIB: {{ account.RIB }}</span>
+                            <span class="amount" style="flex-grow: 1;margin-left: auto; text-align: right;">{{ (account.amount / 100)|round(0, 'floor') }},{{ (account.amount % 100)| strpad(2,'0') }} € </span>
+                            <a class="btn btn-info btn-sm ms-3 btnOption" onclick="openModal({{ account.id }})">...</a>
+                            <div class="card start-100 position-absolute" id="{{ account.id }}" style="width: 12rem; display: none;">
+                                <ul class="list-group list-group-flush">
+                                    <span onclick="closeModal({{ account.id }})" class="text-end fw-bold me-2">X</span>
+                                    <li class="list-group-item"><a href="/account/delete/{{ account.id }}">Supprimer le compte</a></li>
+                                    {# <li class="list-group-item"><a href="/account/change/{{ account.id }}">Renommer le compte<a/></li> #}
+                                </ul>
+                            </div>
+                        </li>
+                        <div class="card top-20 start-100" id="{{ account.id }}" style="width: 12rem; display: none;">
+                            <ul class="list-group list-group-flush">
+                                <span onclick="closeModal( {{ account.id }} )" class="text-end fw-bold me-2">X</span>
+                                <li class="list-group-item"><a href="/account/delete/{{ account.id }}">Supprimer le compte</a></li>
+                                <li class="list-group-item"><a href="/account/change/{{ account.id }}">Renommer le compte</a></li>
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </ul>
+
+                <hr class="my-5" style="height: 3px;background-color: rgb(179 6 27);opacity: 1">
+
+                <div>
+                    <h2>Demande de règlement en attente</h2>
+                    <ul class="list-group">
+                        {% for payment in payments %}
+                        <li class="account-item mt-4 d-flex align-items-center">De: {{ payment.owner.firstname }} {{ payment.owner.name }} 
+                            <span style="font-size:.8em">&nbsp;({{payment.owner.email}})&nbsp;</span>
+                            |<span style="font-size:.9em;flex-grow:1">&nbsp;Le: {{ payment.createdat|date('d/m/Y') }}&nbsp;</span>
+                            <span style="font-size:1.2em;color:#c01717">{{ payment.amount / 100 }}€</span>
+                            <div class="ms-4">
+                                <a href="/payment/accept/{{payment.id}}" class="btn btn-success">V</a>
+                                <a href="/payment/refuse/{{payment.id}}" class="btn btn-danger">X</a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    
+                </div>
+
+                <hr class="my-5" style="height: 3px;background-color: rgb(179 6 27);opacity: 1">
+
+                <div>
+                    <h2>Mes demandes de règlement envoyés</h2>
+                    <ul class="list-group">
+                        {% for request in requests %}
+                            <li class="account-item mt-4 d-flex align-items-center">
+                                <span>À: {{ request.payerUser.firstname }} {{ request.payerUser.name }}</span>
+                                <span style="font-size:.8em">&nbsp;({{request.payerUser.email}})&nbsp;</span>
+                                |<span style="font-size:.9em;">&nbsp;Le: {{ request.createdat|date('d/m/Y') }}&nbsp;</span>
+                                {% if request.status == 0 %}
+                                    <span style="flex-grow:1;color:#89aaca" class="mx-1">En attente</span>
+                                {% elseif request.status == 1 %}
+                                    <span style="flex-grow:1;color:#388a17" class="mx-1">Accepté</span>
+                                {% elseif request.status == 2 %}
+                                    <span style="flex-grow:1;color:#c01717" class="mx-1">Refusé</span>                                    
+                                {% endif %}
+                                <span style="font-size:1.2em;color:#388a17">{{ request.amount / 100 }}€</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <script>
+                function openModal(rib) {
+                    var modal = document.getElementById(rib)
+                    modal.style.display = 'block';
+                }
+                function closeModal(rib) {
+                    var modal = document.getElementById(rib)
+                    modal.style.display = 'none';
+                }
+            </script>
+        </div>
+  
+
+    </div>
+
+    <style>
+        .account-item{border-bottom: 1px solid #ced4da;padding: 1em;}
+    </style>
+
+{% endblock %}

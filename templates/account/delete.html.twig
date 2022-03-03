@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Supprimez un compte{% endblock %}
+
+
+{% block body %}
+<div class="container w-50">
+    <h1 class="mb-4">Supprimez un compte </h1>
+
+    <form action="{{ url('accountDelete') }}" method="POST">
+        <p></p>
+        <div class="form-group mb-3">
+            <label class="mb-2" for="accountId">Compte</label>
+            <select class="form-control" id="account" name="accountId">
+            {% for account in accounts %}
+                <option value="{{ account.id }}">{{ account.type }} - {{ account.name }} </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <div class="invalid-feedback mb-2" style="display: block">
+            Attention ! Cette action est irréversible.
+        </div>
+        <input type="submit" class="btn btn-delete" value="Supprimez">
+    </form>
+
+</div>
+{% endblock %}
