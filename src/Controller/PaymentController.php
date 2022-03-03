@@ -41,6 +41,12 @@ class PaymentController extends AbstractController
             $data = $form->getData();
             $email = $form->get('pUser')->getData();
             $payerUser = $doctrine->getRepository(User::class)->findOneBy(['email' => $email]);
+
+            if (!$payerUser) {
+                throw $this->createNotFoundException(
+                    'No account found with email: '.$email
+                ); 
+             }
             
 
             $payment->setOwner($this->user);

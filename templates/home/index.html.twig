@@ -7,6 +7,21 @@
     
 </style>
 
+
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+<div class="container w-50 mt-5">
+    <div class="text-center my-4">
+        <img src="./img/logo.png" alt="le logo">
+    </div>
+    
+    <div class="d-flex flex-column justify-content-around mt-5">
+        <a href="/account" class="btn btn-primary mx-2 mb-4">Mes comptes</a>
+        <a href="/virement" class="btn btn-primary mx-2 mb-4">Faire un virement</a>
+        <a href="/logout" class="btn btn-primary mx-2">Se déconnecter</a>
+    
+    </div>
+</div>
+{% else %}
 <div class="container w-50 mt-5">
     <div class="text-center my-4">
         <img src="./img/logo.png" alt="le logo">
@@ -22,4 +37,7 @@
     
     </div>
 </div>
+{% endif %}
+
+
 {% endblock %}
